@@ -27,6 +27,37 @@ Assessment:
     setGoals(text);
   }
 
+  function buildSuggestions() {
+    return {
+      overview: `This lesson is designed to help students engage with ${subject || "the topic"} through a clear structure, active participation and short assessment moments.`,
+      steps: [
+        "Start with a short warm-up question to activate prior knowledge.",
+        "Introduce the main concept using simple examples.",
+        "Guide students through a short classroom activity.",
+        "Allow students to work individually or in pairs.",
+        "Close with a quick reflection or exit ticket.",
+      ],
+      differentiation: [
+        "Provide visual instructions for students who benefit from extra structure.",
+        "Break tasks into smaller steps for students with attention difficulties.",
+        "Offer a quiet working option for students who may feel overstimulated.",
+        "Use clear, concrete language and repeat key instructions.",
+        "Allow alternative ways of responding, such as drawing, speaking or short written answers.",
+      ],
+      assessment: [
+        "Use a quick exit ticket to check understanding.",
+        "Ask students to explain one key idea in their own words.",
+        "Observe participation during the activity.",
+      ],
+      materials: [
+        "Whiteboard or slides",
+        "Student worksheet",
+        "Visual prompts or examples",
+        "Exit ticket",
+      ],
+    };
+  }
+
   async function handleSave() {
     if (!subject.trim() || !grade.trim() || !goals.trim()) {
       alert("Please fill Subject, Grade and Goals.");
@@ -42,6 +73,7 @@ Assessment:
         grade,
         duration,
         goals,
+        suggestions: buildSuggestions(),
       })
       .select()
       .single();
@@ -55,7 +87,7 @@ Assessment:
     }
 
     console.log("Saved lesson:", data);
-    alert("Lesson saved!");
+    alert("Lesson saved with inclusive classroom support!");
   }
 
   return (
