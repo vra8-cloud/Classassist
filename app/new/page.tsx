@@ -28,16 +28,33 @@ Assessment:
   }
 
   async function handleSave() {
+    if (!subject.trim() || !grade.trim() || !goals.trim()) {
+      alert("Please fill Subject, Grade and Goals.");
+      return;
+    }
+
     setSaving(true);
 
-    await supabase.from("lesson_plans").insert({
-      subject,
-      grade,
-      duration,
-      goals,
-    });
+    const { data, error } = await supabase
+      .from("lesson_plans")
+      .insert({
+        subject,
+        grade,
+        duration,
+        goals,
+      })
+      .select()
+      .single();
 
     setSaving(false);
+
+    if (error) {
+      console.error("Save error:", error);
+      alert(`Save failed: ${error.message}`);
+      return;
+    }
+
+    console.log("Saved lesson:", data);
     alert("Lesson saved!");
   }
 
@@ -59,6 +76,7 @@ Assessment:
           value={grade}
           onChange={(e) => setGrade(e.target.value)}
         />
+
         <input
           type="number"
           className="border rounded-md p-3"
@@ -85,7 +103,7 @@ Assessment:
         <button
           onClick={handleSave}
           disabled={saving}
-          className="border px-4 py-2 rounded-md"
+          className="border px-4 py-2 rounded-md disabled:opacity-60"
         >
           {saving ? "Saving..." : "Save lesson"}
         </button>

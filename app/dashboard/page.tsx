@@ -57,7 +57,7 @@ export default function Page() {
       const { error } = await supabase
         .from("lesson_plans")
         .delete()
-        .neq("id", "00000000-0000-0000-0000-000000000000"); // valid UUID workaround
+        .neq("id", "00000000-0000-0000-0000-000000000000");
 
       if (error) throw error;
 
@@ -77,10 +77,13 @@ export default function Page() {
     setErrorMsg(null);
 
     try {
-      const { error } = await supabase.from("lesson_plans").delete().eq("id", id);
+      const { error } = await supabase
+        .from("lesson_plans")
+        .delete()
+        .eq("id", id);
+
       if (error) throw error;
 
-      // optimistic UI update
       setPlans((prev) => prev.filter((p) => p.id !== id));
     } catch (err: any) {
       setErrorMsg(err?.message ?? "Failed to delete.");
@@ -94,75 +97,100 @@ export default function Page() {
   }, []);
 
   return (
-    <div className="space-y-6">
-      <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
-        <div className="space-y-1">
-          <h1 className="text-3xl font-bold tracking-tight">Dashboard</h1>
-          <p className="text-sm text-gray-600">
-            All lesson plans in the system.
+    <div className="space-y-8">
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+        <div className="space-y-2">
+          <p className="text-sm font-medium text-gray-500">
+            Teacher workspace
+          </p>
+
+          <h1 className="text-3xl font-bold tracking-tight">
+            Welcome back 👋
+          </h1>
+
+          <p className="max-w-xl text-gray-600">
+            Create, organize and manage your AI-assisted lesson plans in one
+            place.
           </p>
         </div>
 
         <div className="flex flex-wrap gap-2">
           <Link
             href="/new"
-            className="rounded-md bg-gray-900 px-4 py-2 text-sm font-medium text-white hover:opacity-95"
+            className="rounded-lg bg-slate-950 px-4 py-2 text-sm font-medium text-white hover:bg-slate-800"
           >
-            New Lesson
+            + New Lesson
           </Link>
 
           <button
             onClick={loadPlans}
-            className="rounded-md border px-4 py-2 text-sm font-medium hover:bg-gray-50"
+            className="rounded-lg border px-4 py-2 text-sm font-medium hover:bg-gray-50"
           >
             Refresh
           </button>
 
           <button
             onClick={handleClearAll}
-            className="rounded-md border px-4 py-2 text-sm font-medium hover:bg-gray-50"
+            className="rounded-lg border px-4 py-2 text-sm font-medium hover:bg-gray-50"
           >
             Clear All
           </button>
         </div>
       </div>
 
-      <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
-        <StatCard label="Total plans" value={String(total)} />
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
+        <StatCard label="Total lesson plans" value={String(total)} />
         <StatCard
           label="Latest subject"
           value={latest ? latest.subject : "—"}
         />
         <StatCard
           label="Latest created"
-          value={latest ? new Date(latest.created_at).toLocaleDateString() : "—"}
+          value={
+            latest
+              ? new Date(latest.created_at).toLocaleDateString()
+              : "—"
+          }
         />
       </div>
 
       {errorMsg && (
-        <div className="rounded-md border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-700">
+        <div className="rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
           {errorMsg}
         </div>
       )}
 
-      <div className="space-y-3">
+      <div className="space-y-4">
         {loading ? (
-          <div className="rounded-xl border bg-white p-6 text-sm text-gray-600 shadow-sm">
-            Loading…
+          <div className="rounded-2xl border bg-white p-6 text-sm text-gray-600 shadow-sm">
+            Loading lesson plans…
           </div>
         ) : plans.length === 0 ? (
-          <div className="rounded-xl border bg-white p-6 text-sm text-gray-600 shadow-sm">
-            No lesson plans yet.
+          <div className="rounded-2xl border bg-white p-8 shadow-sm">
+            <h2 className="text-lg font-semibold">
+              No lesson plans yet
+            </h2>
+
+            <p className="mt-2 text-sm text-gray-600">
+              Create your first AI-assisted lesson plan to get started.
+            </p>
+
+            <Link
+              href="/new"
+              className="mt-5 inline-flex rounded-lg bg-slate-950 px-4 py-2 text-sm font-medium text-white hover:bg-slate-800"
+            >
+              Create Lesson Plan
+            </Link>
           </div>
         ) : (
           plans.map((p) => (
             <div
               key={p.id}
-              className="rounded-xl border bg-white p-5 shadow-sm transition hover:border-gray-300"
+              className="rounded-2xl border bg-white p-5 shadow-sm transition hover:border-gray-300"
             >
-              <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+              <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
                 <div className="min-w-0">
-                  <div className="flex flex-wrap items-center gap-x-3 gap-y-1">
+                  <div className="flex flex-wrap items-center gap-2">
                     <Link
                       href={`/plan/details?id=${p.id}`}
                       className="text-lg font-semibold hover:underline"
@@ -170,20 +198,21 @@ export default function Page() {
                       {p.subject}
                     </Link>
 
-                    <span className="rounded-full border px-2 py-0.5 text-xs text-gray-700">
+                    <span className="rounded-full border px-2 py-1 text-xs text-gray-700">
                       {p.duration} min
                     </span>
-                    <span className="rounded-full border px-2 py-0.5 text-xs text-gray-700">
+
+                    <span className="rounded-full border px-2 py-1 text-xs text-gray-700">
                       {p.grade}
                     </span>
                   </div>
 
-                  <p className="mt-2 line-clamp-2 text-sm text-gray-700">
+                  <p className="mt-3 line-clamp-2 text-sm text-gray-700">
                     {p.goals}
                   </p>
                 </div>
 
-                <div className="flex flex-col items-start gap-2 sm:items-end">
+                <div className="flex flex-col items-start gap-3 sm:items-end">
                   <div className="text-xs text-gray-500">
                     {new Date(p.created_at).toLocaleString()}
                   </div>
@@ -191,7 +220,7 @@ export default function Page() {
                   <div className="flex gap-2">
                     <Link
                       href={`/plan/preview?id=${p.id}`}
-                      className="rounded-md border px-3 py-2 text-xs font-medium hover:bg-gray-50"
+                      className="rounded-lg border px-3 py-2 text-xs font-medium hover:bg-gray-50"
                     >
                       Preview
                     </Link>
@@ -199,8 +228,7 @@ export default function Page() {
                     <button
                       onClick={() => handleDeleteOne(p.id)}
                       disabled={deletingId === p.id}
-                      className="rounded-md border px-3 py-2 text-xs font-medium hover:bg-gray-50 disabled:opacity-60"
-                      title="Delete this plan"
+                      className="rounded-lg border px-3 py-2 text-xs font-medium hover:bg-gray-50 disabled:opacity-60"
                     >
                       {deletingId === p.id ? "Deleting…" : "Delete"}
                     </button>
@@ -215,11 +243,20 @@ export default function Page() {
   );
 }
 
-function StatCard({ label, value }: { label: string; value: string }) {
+function StatCard({
+  label,
+  value,
+}: {
+  label: string;
+  value: string;
+}) {
   return (
-    <div className="rounded-xl border bg-white p-4 shadow-sm">
-      <div className="text-xs text-gray-600">{label}</div>
-      <div className="mt-1 text-lg font-semibold">{value}</div>
+    <div className="rounded-2xl border bg-white p-5 shadow-sm">
+      <div className="text-sm text-gray-500">{label}</div>
+
+      <div className="mt-2 text-2xl font-semibold tracking-tight">
+        {value}
+      </div>
     </div>
   );
 }

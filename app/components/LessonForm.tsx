@@ -30,60 +30,88 @@ export default function LessonForm() {
   }
 
   return (
-    <form onSubmit={handleSubmit} className="mx-auto max-w-2xl p-6 space-y-4">
-      <h1 className="text-2xl font-semibold">Create a lesson plan</h1>
-
+    <form onSubmit={handleSubmit} className="mx-auto max-w-2xl p-6 space-y-6">
       <div className="space-y-2">
-        <label className="block text-sm font-medium">Subject</label>
-        <input
-          className="w-full rounded-md border px-3 py-2"
-          value={subject}
-          onChange={(e) => setSubject(e.target.value)}
-          placeholder="e.g. Math, Language, History"
-        />
+        <p className="text-sm font-medium text-gray-500">New lesson</p>
+        <h1 className="text-3xl font-semibold tracking-tight">
+          Create a lesson plan
+        </h1>
+        <p className="text-gray-600">
+          Plan a structured lesson in minutes with clear goals, timing and
+          classroom-ready suggestions.
+        </p>
       </div>
 
-      <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+      <div className="rounded-2xl border bg-white p-6 shadow-sm space-y-5">
         <div className="space-y-2">
-          <label className="block text-sm font-medium">Grade / Age</label>
+          <label className="block text-sm font-medium">
+            What subject are you teaching?
+          </label>
           <input
-            className="w-full rounded-md border px-3 py-2"
-            value={grade}
-            onChange={(e) => setGrade(e.target.value)}
-            placeholder="e.g. 5th grade / 10 years"
+            className="w-full rounded-lg border px-4 py-3 outline-none focus:border-slate-900"
+            value={subject}
+            onChange={(e) => setSubject(e.target.value)}
+            placeholder="e.g. Math, Language, History"
           />
         </div>
 
+        <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+          <div className="space-y-2">
+            <label className="block text-sm font-medium">
+              Which grade or age group?
+            </label>
+            <input
+              className="w-full rounded-lg border px-4 py-3 outline-none focus:border-slate-900"
+              value={grade}
+              onChange={(e) => setGrade(e.target.value)}
+              placeholder="e.g. 5th grade / 10 years"
+            />
+          </div>
+
+          <div className="space-y-2">
+            <label className="block text-sm font-medium">
+              Lesson duration
+            </label>
+            <input
+              type="number"
+              className="w-full rounded-lg border px-4 py-3 outline-none focus:border-slate-900"
+              value={duration}
+              min={10}
+              max={180}
+              onChange={(e) => setDuration(Number(e.target.value))}
+            />
+          </div>
+        </div>
+
         <div className="space-y-2">
-          <label className="block text-sm font-medium">Duration (min)</label>
-          <input
-            type="number"
-            className="w-full rounded-md border px-3 py-2"
-            value={duration}
-            min={10}
-            max={180}
-            onChange={(e) => setDuration(Number(e.target.value))}
+          <label className="block text-sm font-medium">
+            What should students learn by the end?
+          </label>
+          <textarea
+            className="w-full rounded-lg border px-4 py-3 outline-none focus:border-slate-900"
+            rows={6}
+            value={goals}
+            onChange={(e) => setGoals(e.target.value)}
+            placeholder="Write 2–4 learning goals…"
           />
         </div>
-      </div>
 
-      <div className="space-y-2">
-        <label className="block text-sm font-medium">Learning goals</label>
-        <textarea
-          className="w-full rounded-md border px-3 py-2"
-          rows={5}
-          value={goals}
-          onChange={(e) => setGoals(e.target.value)}
-          placeholder="Write 2–4 learning goals…"
-        />
-      </div>
+        <div className="flex flex-col gap-3 sm:flex-row">
+          <button
+            type="submit"
+            className="rounded-lg bg-slate-950 px-5 py-3 font-medium text-white hover:bg-slate-800"
+          >
+            Generate lesson with AI ✨
+          </button>
 
-      <button
-        type="submit"
-        className="rounded-md border px-4 py-2 font-medium hover:bg-gray-50"
-      >
-        Generate suggestions
-      </button>
+          <button
+            type="button"
+            className="rounded-lg border px-5 py-3 font-medium hover:bg-gray-50"
+          >
+            Save draft
+          </button>
+        </div>
+      </div>
     </form>
   );
 }
